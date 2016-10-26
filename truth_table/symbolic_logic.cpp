@@ -114,52 +114,56 @@ void implement(vector<vector<bool>> &matrix, int count) {
 	}
 
 }
-//pos is the position of symbol in the string
-//k is the kth column in the matrix
-void implementDisjunct(vector<vector<bool>> &matrix, string str, int pos, int k){
-    for (int i = 0; i < matrix.size(); i++) {
-        matrix[i][pos] = disjunct(matrix[i][str[k-1]-80], matrix[i][str[k+1]-80]);
-    }
+
+//pos is the column to be filled in the matrix
+//k-1 is the first letter in the string
+//k+1 is the second letter in the string
+//When there are two symbols comparing with each other, flag is true
+//When there is not two symbols comparing with each other, flag is false 
+void implementDisjunct(vector<vector<bool>> &matrix, string str, int pos, int k, bool flag, int extra_else) {
+	if (flag) {
+		for (int i = 0; i < matrix.size(); i++) {
+			matrix[i][pos] = disjunct(matrix[i][str[k - 1] - 80], matrix[i][str[k + 1] - 80]);
+		}
+	}
+	else {
+		for (int i = 0; i < matrix.size(); i++) {
+			matrix[i][pos] = disjunct(matrix[i][str[k - 1] - 80], matrix[i][pos+extra_else]);
+		}
+	}
 }
 
-//Not done yet
-void implementConjunct(vector<vector<bool>> &matrix, string str, int pos, int k){
-    for (int i = 0; i < matrix.size(); i++) {
-        matrix[i][pos] = disjunct(matrix[i][str[k-1]-80], matrix[i][str[k+1]-80]);
-    }
-}
-
-//Not done yet
-void implementCondition(vector<vector<bool>> &matrix, string str, int pos, int k){
-    for (int i = 0; i < matrix.size(); i++) {
-        matrix[i][pos] = disjunct(matrix[i][str[k-1]-80], matrix[i][str[k+1]-80]);
-    }
-}
-//'v' is number 0;
-//'^' is number 1;
-//'->' is number 2;
-//'<->' is number 3;
-// '~' is number 4;
 // pos is the beginning position of the column(the position of last symbol)
-void analyze(vector<vector<bool>> &matrix, string str, int pos) {
+// Return value is the position of column in the matrix of the answer of this segment of the string
+int analyze(vector<vector<bool>> &matrix, string str, int pos) {
+	bool flag = true;
 	int extra = 0;
+	int extra_else = 0;
 	for (int k = 0; k < str.length(); k++) {
 		if (str[k] == 'v') {
             extra++;
             if (is_symbol(str[k+1]) && is_symbol(str[k-1])){
-                implementDisjunct(matrix, str, pos+extra, k);
+                implementDisjunct(matrix, str, pos+extra, k, flag, 0);
             }
             else {
+				flag = !flag;
                 if(str[k+1] == '('){
-                    for (int i = k+1; i < str.length(); i++)
-                        if (str[i] == ')'){
-                            analyze(matrix, str.substr(k+2, i-k-2), pos+extra);
-                        }
+					for (int i = k + 1; i < str.length(); i++) {
+						if (str[i] == ')') {
+							extra_else += analyze(matrix, str.substr(k + 2, i - k - 2), pos + extra);
+						}
+					}
+					//print_matrix(matrix);
+					if (is_symbol(str[k - 1])) {
+						implementDisjunct(matrix, str, pos+extra, k, flag, extra_else);
+					}
+
                 }
                 
             }
 		}
 	}
+	return extra;
 }
 
 int main() {
@@ -174,7 +178,7 @@ int main() {
 		matrix[i].resize(count + columns);
 	}
 	implement(matrix, count);
-	analyze(matrix, str, count-1);
+	int abc = analyze(matrix, str, count-1);
     print_first_line(count, str);
 	print_matrix(matrix);
 
