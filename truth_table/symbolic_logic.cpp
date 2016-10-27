@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <math.h>
 
-//test github
-
 using namespace std;
 
 enum state {both_symbol, left_symbol, right_symbol, neither_symbol};
@@ -27,7 +25,7 @@ void print_matrix(vector<vector<bool>> matrix) {
 	}
 }
 
-void print_first_line(int count, string str){
+void print_first_line(int count){
     for(int i = 0; i < count; i++)
         printf("%c\t", 80+i);
     printf("\n");
@@ -133,7 +131,7 @@ void implementDisjunct(vector<vector<bool>> &matrix, string str, int pos, int k,
 	}
 	else if(status == right_symbol){
 		for (int i = 0; i < matrix.size(); i++) {
-			matrix[i][pos] = disjunct(matrix[i][str[k - 1] - 80], matrix[i][pos+extra_else_right]);
+			matrix[i][pos] = disjunct(matrix[i][str[k - 1] - 80], matrix[i][ pos+extra_else_right]);
 		}
 	}
 	else if (status == left_symbol) {
@@ -146,6 +144,9 @@ void implementDisjunct(vector<vector<bool>> &matrix, string str, int pos, int k,
 			matrix[i][pos] = disjunct(matrix[i][pos - extra_else_left], matrix[i][pos + extra_else_right]);
 		}
 	}
+	//print_first_line(4);
+	//print_matrix(matrix);
+	//printf("\n\n");
 }
 
 // pos is the beginning position of the column(the position of last symbol)
@@ -190,7 +191,7 @@ int analyze(vector<vector<bool>> &matrix, string str, int pos) {
 							}
 						}
 						if (str[i] == ')') {
-							extra_else_right += analyze(matrix, str.substr(k + 2, i - k - 2), pos - extra);
+							extra_else_right += analyze(matrix, str.substr(k + 2, i - k - 2), pos + extra);
 							break;
 						}
 					}
@@ -209,7 +210,7 @@ int analyze(vector<vector<bool>> &matrix, string str, int pos) {
 							}
 						}
 						if (str[i] == '(') {
-							extra_else_left += analyze(matrix, str.substr(i+1, k - 2 - i), pos + extra);
+							extra_else_left += analyze(matrix, str.substr(i+1, k - 2 - i), pos);
 							break;
 						}
 					}
@@ -245,7 +246,7 @@ int main() {
 	}
 	implement(matrix, count);
 	int abc = analyze(matrix, str, count-1);
-    print_first_line(count, str);
+    print_first_line(count);
 	print_matrix(matrix);
 
 	return 0;
