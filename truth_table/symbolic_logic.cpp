@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <math.h>
 
+//test github
+
 using namespace std;
 
 enum state {both_symbol, left_symbol, right_symbol, neither_symbol};
