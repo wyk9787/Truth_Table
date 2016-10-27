@@ -6,6 +6,9 @@
 
 using namespace std;
 
+enum state {both_symbol, left_symbol, right_symbol, neither_symbol};
+//left_symbol means on the left of the command is a combination, vice versa for the right_symbol
+
 void printWelcome() {
 
 }
@@ -120,15 +123,25 @@ void implement(vector<vector<bool>> &matrix, int count) {
 //k+1 is the second letter in the string
 //When there are two symbols comparing with each other, flag is true
 //When there is not two symbols comparing with each other, flag is false 
-void implementDisjunct(vector<vector<bool>> &matrix, string str, int pos, int k, bool flag, int extra_else) {
-	if (flag) {
+void implementDisjunct(vector<vector<bool>> &matrix, string str, int pos, int k, state status, int extra_else_left, int extra_else_right) {
+	if (status == both_symbol) {
 		for (int i = 0; i < matrix.size(); i++) {
 			matrix[i][pos] = disjunct(matrix[i][str[k - 1] - 80], matrix[i][str[k + 1] - 80]);
 		}
 	}
-	else {
+	else if(status == right_symbol){
 		for (int i = 0; i < matrix.size(); i++) {
-			matrix[i][pos] = disjunct(matrix[i][str[k - 1] - 80], matrix[i][pos+extra_else]);
+			matrix[i][pos] = disjunct(matrix[i][str[k - 1] - 80], matrix[i][pos+extra_else_right]);
+		}
+	}
+	else if (status == left_symbol) {
+		for (int i = 0; i < matrix.size(); i++) {
+			matrix[i][pos] = disjunct(matrix[i][str[k + 1] - 80], matrix[i][pos - extra_else_left]);
+		}
+	}
+	else if (status == neither_symbol) {
+		for (int i = 0; i < matrix.size(); i++) {
+			matrix[i][pos] = disjunct(matrix[i][pos - extra_else_left], matrix[i][pos + extra_else_right]);
 		}
 	}
 }
@@ -136,30 +149,81 @@ void implementDisjunct(vector<vector<bool>> &matrix, string str, int pos, int k,
 // pos is the beginning position of the column(the position of last symbol)
 // Return value is the position of column in the matrix of the answer of this segment of the string
 int analyze(vector<vector<bool>> &matrix, string str, int pos) {
-	bool flag = true;
+	state status;
 	int extra = 0;
-	int extra_else = 0;
+	int extra_else_left = 0;
+	int extra_else_right = 0;
+	int paren = 0;
 	for (int k = 0; k < str.length(); k++) {
-		if (str[k] == 'v') {
+		if (str[k] == '(') {//jump over every possible inner '( )'
+			paren++;
+			while (paren) {
+				k++;
+				if (str[k] == ')')
+					paren--;
+				else if (str[k] == '(')
+					paren++;
+				else if (str[k] == 'v')
+					extra++;
+			}
+		}
+		if (str[k] == 'v') {//if there is a command
             extra++;
-            if (is_symbol(str[k+1]) && is_symbol(str[k-1])){
-                implementDisjunct(matrix, str, pos+extra, k, flag, 0);
+            if (is_symbol(str[k+1]) && is_symbol(str[k-1])){//is this command between two symbols
+				status = both_symbol;
+                implementDisjunct(matrix, str, pos+extra, k, status, 0, 0);
             }
-            else {
-				flag = !flag;
-                if(str[k+1] == '('){
+            else {//if it's not between two symbols
+				if (str[k + 1] == '(') {// is the one after this command a '('
 					for (int i = k + 1; i < str.length(); i++) {
+						paren = 0;
+						if (str[i] == '(') {//jump over every possible inner '( )'
+							paren++;
+							while (paren) {
+								i++;
+								if (str[i] == ')')
+									paren--;
+								else if (str[i] == '(')
+									paren++;
+							}
+						}
 						if (str[i] == ')') {
-							extra_else += analyze(matrix, str.substr(k + 2, i - k - 2), pos + extra);
+							extra_else_right += analyze(matrix, str.substr(k + 2, i - k - 2), pos - extra);
+							break;
 						}
 					}
-					//print_matrix(matrix);
-					if (is_symbol(str[k - 1])) {
-						implementDisjunct(matrix, str, pos+extra, k, flag, extra_else);
+				}
+				if (str[k - 1] == ')') {//or is it a ')'
+					for (int i = k - 1; i >= 0; i--) {
+						paren = 0;
+						if (str[i] == ')') {//jump over every possible inner '( )'
+							paren++;
+							while (paren) {
+								i--;
+								if (str[i] == '(')
+									paren--;
+								else if (str[i] == ')')
+									paren++;
+							}
+						}
+						if (str[i] == '(') {
+							extra_else_left += analyze(matrix, str.substr(i+1, k - 2 - i), pos + extra);
+							break;
+						}
 					}
-
-                }
-                
+				}
+				if (is_symbol(str[k - 1])) {//is the one before this command a symbol
+					status = right_symbol;
+					implementDisjunct(matrix, str, pos+extra, k, status, 0, extra_else_right);
+				}
+				else if (is_symbol(str[k + 1])) {//is the one after this command a symbo
+					status = left_symbol;
+					implementDisjunct(matrix, str, pos + extra, k, status, extra_else_left, 0);
+				}
+				else {
+					status = neither_symbol;
+					implementDisjunct(matrix, str, pos + extra, k, status, extra_else_left, extra_else_right);
+				}
             }
 		}
 	}
