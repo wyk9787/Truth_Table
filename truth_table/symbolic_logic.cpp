@@ -10,6 +10,8 @@ enum state {both_symbol, left_symbol, right_symbol, neither_symbol, symbol};
 //left_symbol means on the left of the command is a combination, which means the symbol is on the right; vice versa for the right_symbol
 enum left_right_side {left_side, right_side, first_case};
 //to see when "analyze" was called, we are going to the left or the right side of the main connection
+enum answer {tautology, contradiction, contigency};
+
 void printWelcome() {
 
 }
@@ -530,7 +532,7 @@ int analyze(vector<vector<bool>> &matrix, string str, int pos, left_right_side s
 	else if (side == right_side)
 		return extra - numberOfColumns(str.substr(main_pos + 1, str.length() - main_pos));
 	else if (side == first_case)
-		return pos + numberOfColumns(str.substr(0, main_pos)) + 2;
+		return pos + numberOfColumns(str.substr(0, main_pos)) + 1;
 }
 
 int main() {
@@ -548,7 +550,21 @@ int main() {
 	int n = analyze(matrix, str, count-1, first_case);
     print_first_line(count);
 	print_matrix(matrix);
-	cout << "The answer is the " << n << "th column of the matrix." << endl;
-
+	answer ans = tautology;
+	int count_ans = 0;
+	for (int i = 0; i < matrix.size(); i++) {
+		if (matrix[i][n] == false) {
+			count_ans++;
+			ans = contigency;
+		}
+	}
+	cout << "The answer is the " << n+1 << "th column of the matrix." << endl;
+	if (ans == tautology)
+		cout << "It's a tautology.\n" << endl;
+	else if (count_ans == matrix.size())
+		cout << "It's a contradiction.\n" << endl;
+	else
+		cout << "It's a contigency.\n" << endl;
 	return 0;
 }
+//~(((~P)^(~Q))-(~(PvQ))))
