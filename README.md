@@ -14,5 +14,10 @@ Contrapolation of deductive validity:
 It's impossible to have all true premises but a false conclusion.
 
 Instruction for using:
-Sentences are represented by P, Q, R...Z.
-Symbols: 
+Sentences are represented by P, Q, R...Z(uppercase only)
+Symbols:~, >(representing ->), ^, v, -(representing <->)
+All sentences should be written in offical sense and '~' should be surrounded by parentheses.
+
+Examples:
+((P>Q)^(~R))
+(((P-S)v(~R))>T)
