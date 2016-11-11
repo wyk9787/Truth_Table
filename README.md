@@ -12,3 +12,7 @@ If the premise is true, then the conclusion must be true.
 
 Contrapolation of deductive validity:
 It's impossible to have all true premises but a false conclusion.
+
+Instruction for using:
+Sentences are represented by P, Q, R...Z.
+Symbols: 
