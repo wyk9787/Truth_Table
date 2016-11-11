@@ -1,4 +1,5 @@
 # Truth_Table
+
 Truth_Table for Symbolic Logic Class
 
 It's designed for solving specific problems in PHY-102 Symbolic Logic course in Grinnell College.
@@ -8,14 +9,21 @@ the reasoning among sentences are deductively valid by assigning true of false t
 to check if it's deductively valid.
 
 ##Definition for deductive validity:
+
 If the premise is true, then the conclusion must be true.
+
 It's impossible to have all true premises but a false conclusion.
 
 ##Instruction for using:
-Sentences are represented by P, Q, R...Z(uppercase only)
-Symbols:~, >(representing ->), ^, v, -(representing <->)
-All sentences should be written in offical sense and '~' should be surrounded by parentheses.
+
+**Sentences:** Represented by P, Q, R...Z(uppercase only)
+
+**Symbols:** ~, >(representing ->), ^, v, -(representing <->)
+
+**Others:** All sentences should be written in official sense and '~' should be surrounded by parentheses.
 
 ##Examples:
+
 ((P>Q)^(~R))
+
 (((P-S)v(~R))>T)
