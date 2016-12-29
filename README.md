@@ -4,8 +4,8 @@ Truth_Table for Symbolic Logic Class
 
 It's designed for solving specific problems in PHY-102 Symbolic Logic course in Grinnell College.
 
-Establishing truth table is onsentencese of the most common and tedious for people but easy for computer way to check if 
-the reasoning among  are deductively valid by assigning true of false to each sentence.
+Establishing truth table is one of the most common and tedious for people but easy for computer way to check if 
+the reasoning among sentences are deductively valid by assigning true of false to each sentence.
 
 ##Definition for deductive validity:
 
